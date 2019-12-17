@@ -60,7 +60,7 @@ public class stepsDefinitions {
     }
 
     @When("no values are set as triangle sides size")
-    public void negative_values_are_set_as_triangle_sides_size() {
+    public void no_values_are_set_as_triangle_sides_size() {
         try {
             this.driver.findElement(By.id("lado1")).sendKeys("");
             this.driver.findElement(By.id("lado2")).sendKeys("");
@@ -95,10 +95,13 @@ public class stepsDefinitions {
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
                     (By.id("calcular")));
 
-            String currentMessage = this.driver.findElement(By.id("message")).getText();
-            assertEquals("", currentMessage);
+            String actualMessage = this.driver.findElement(By.id("message")).getText();
+            assertEquals("", actualMessage);
         }
-        catch(NoSuchElementException e1, NoSuchElementException e2) {
+        catch(TimeoutException e) {
+            System.out.println("Element not found!");
+        }
+        catch(NoSuchElementException e) {
             System.out.println("Element not found!");
         }
         finally {
@@ -110,9 +113,35 @@ public class stepsDefinitions {
     public void no_triangle_type_message_should_be_displayed() {
         try {
             this.driver.findElement(By.id("calcular")).click();
-            String currentMessage = this.driver.findElement(By.id("message")).getText();
+            this.wait.until(ExpectedConditions.textToBePresentInElementValue
+                    (By.id("lado1"), ""));
 
-            assertTrue(currentMessage.isEmpty());
+            String actualMessage = this.driver.findElement(By.id("message")).getText();
+            assertEquals("", actualMessage);
+        }
+        catch(TimeoutException e) {
+            System.out.println("Element not found!");
+        }
+        catch(NoSuchElementException e) {
+            System.out.println("Element not found!");
+        }
+        finally {
+            this.driver.close();
+        }
+    }
+
+    @Then("fill all sides size message should be displayed")
+    public void fill_all_sides_size_message_should_be_displayed() {
+        try {
+            this.driver.findElement(By.id("calcular")).click();
+            this.wait.until(ExpectedConditions.textToBePresentInElementValue
+                    (By.id("lado1"), ""));
+
+            String actualMessage = this.driver.findElement(By.id("message")).getText();
+            assertEquals("Preencha todos os lados", actualMessage);
+        }
+        catch(TimeoutException e) {
+            System.out.println("Element not found!");
         }
         catch(NoSuchElementException e) {
             System.out.println("Element not found!");
