@@ -1,7 +1,7 @@
 # triangle
 Triangle Calculator
 
-Projeto para validar a aplicação [Calculadora de Triângulos](https://calculadoratriangulo.herokuapp.com/.
+Projeto para validar a aplicação [Calculadora de Triângulos](https://calculadoratriangulo.herokuapp.com/).
 
 Utilizando:
 * Maven para gestão de pacotes e dependências
