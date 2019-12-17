@@ -5,9 +5,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class helper {
 
-    public static WebDriver setupCalculatorOnBrowser(){
+    public static WebDriver setupCalculatorOnBrowser() {
         WebDriver driver;
-        String driverPath="/Users/almeidatm/Workstuff/cucumber/chromedriver";
+        String projectDir = System.getProperty("user.dir");
+        String driverPath = projectDir + "/drivers/chromedriver";
 
         System.setProperty("webdriver.chrome.driver", driverPath);
         driver = new ChromeDriver();

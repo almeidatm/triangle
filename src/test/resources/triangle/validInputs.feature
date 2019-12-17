@@ -3,10 +3,15 @@ Feature: Valid Inputs for Triangle Calculator
 
   Scenario: Special Char
     Given open app on Chrome browser
-    When input "-" symbol in any input
+    When input - symbol in any input
     Then no triangle type message should be displayed
 
   Scenario: Negative Values
     Given open app on Chrome browser
-    When negative values as triangle sides size
+    When negative values are set as triangle sides size
+    Then no triangle type message should be displayed
+
+  Scenario: Empty Values
+    Given open app on Chrome browser
+    When no values are set as triangle sides size
     Then no triangle type message should be displayed
