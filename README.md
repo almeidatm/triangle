@@ -1,4 +1,4 @@
-# triangle
+# Project Triangle
 Triangle Calculator
 
 Projeto para validar a aplicação [Calculadora de Triângulos](https://calculadoratriangulo.herokuapp.com/).
