@@ -4,6 +4,8 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
+import cucumber.api.java.Before;
+import cucumber.api.java.After;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,90 +14,58 @@ import static org.junit.Assert.*;
 
 public class stepsDefinitions {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private WebDriver driver = null;
+    private WebDriverWait wait = null;
+    private locatorsList elements = new locatorsList();
 
-    @Given("open app on Chrome browser")
-    public void open_app_on_Chrome_browser() {
+    @Before
+    public void setUp() {
         this.driver = helper.setupCalculatorOnBrowser();
         this.wait = new WebDriverWait(this.driver, 5);
     }
 
+    @Given("open app on Chrome browser")
+    public void openAppOnChrome() {
+        this.driver.navigate().refresh();
+    }
+
     @When("check what is displayed")
-    public void check_what_is_displayed() {
+    public void checkAppLoaded() {
         try {
             this.wait.until(ExpectedConditions.presenceOfElementLocated
-                    (By.xpath("//title[text()='Calculadora de Triângulos']")));
+                    (By.xpath(this.elements.getHtmlTitle())));
         }
         catch(TimeoutException e) {
-            System.out.println("Element not found!");
-            this.driver.close();
-        }
-    }
-
-    @When("input (.*) symbol in any input")
-    public void input_symbol_in_any_input(String specialChar) {
-        try {
-            this.driver.findElement(By.id("lado1")).sendKeys(specialChar);
-            this.driver.findElement(By.id("lado2")).sendKeys("1");
-            this.driver.findElement(By.id("lado3")).sendKeys("1");
-        }
-        catch(NoSuchElementException e) {
-            System.out.println("Element not found!");
-            this.driver.close();
-        }
-    }
-
-    @When("negative values are set as triangle sides size")
-    public void negative_values_are_set_as_triangle_sides_size() {
-        try {
-            this.driver.findElement(By.id("lado1")).sendKeys("-1");
-            this.driver.findElement(By.id("lado2")).sendKeys("-1");
-            this.driver.findElement(By.id("lado3")).sendKeys("-1");
-        }
-        catch(NoSuchElementException e) {
-            System.out.println("Element not found!");
-            this.driver.close();
-        }
-    }
-
-    @When("no values are set as triangle sides size")
-    public void no_values_are_set_as_triangle_sides_size() {
-        try {
-            this.driver.findElement(By.id("lado1")).sendKeys("");
-            this.driver.findElement(By.id("lado2")).sendKeys("");
-            this.driver.findElement(By.id("lado3")).sendKeys("");
-        }
-        catch(NoSuchElementException e) {
             System.out.println("Element not found!");
             this.driver.close();
         }
     }
 
     @Then("should see title, inputs and button")
-    public void should_see_title_inputs_and_button() {
+    public void checkAppElements() {
         try {
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.xpath("//h2[text()='Informe os Lados do Triângulo']")));
+                    (By.xpath(this.elements.getMainTitle())));
 
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.xpath("//label[text()='Lado 1:']")));
+                    (By.xpath(this.elements.getSide1Label())));
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.xpath("//label[text()='Lado 2:']")));
+                    (By.xpath(this.elements.getSide2Label())));
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.xpath("//label[text()='Lado 3:']")));
+                    (By.xpath(this.elements.getSide3Label())));
 
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.id("lado1")));
+                    (By.id(this.elements.getSide1Input())));
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.id("lado2")));
+                    (By.id(this.elements.getSide2Input())));
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.id("lado3")));
+                    (By.id(this.elements.getSide3Input())));
 
             this.wait.until(ExpectedConditions.visibilityOfElementLocated
-                    (By.id("calcular")));
+                    (By.id(this.elements.getButton())));
 
-            String actualMessage = this.driver.findElement(By.id("message")).getText();
+            String actualMessage = this.driver.findElement
+                    (By.id(this.elements.getClassificationMessage())).getText();
             assertEquals("", actualMessage);
         }
         catch(TimeoutException e) {
@@ -109,15 +79,33 @@ public class stepsDefinitions {
         }
     }
 
-    @Then("no triangle type message should be displayed")
-    public void no_triangle_type_message_should_be_displayed() {
+    @When("insert values (.*), (.*) and (.*)")
+    public void insertSideValues(String side1, String side2, String side3) {
         try {
-            this.driver.findElement(By.id("calcular")).click();
-            this.wait.until(ExpectedConditions.textToBePresentInElementValue
-                    (By.id("lado1"), ""));
+            this.driver.findElement
+                    (By.id(this.elements.getSide1Input())).sendKeys(side1);
+            this.driver.findElement
+                    (By.id(this.elements.getSide2Input())).sendKeys(side2);
+            this.driver.findElement
+                    (By.id(this.elements.getSide3Input())).sendKeys(side3);
+        }
+        catch(NoSuchElementException e) {
+            System.out.println("Element not found!");
+            this.driver.close();
+        }
+    }
 
-            String actualMessage = this.driver.findElement(By.id("message")).getText();
-            assertEquals("", actualMessage);
+    @Then("the app should show message (.*)")
+    public void classifyTriangle(String type) {
+        try {
+            this.driver.findElement
+                    (By.id(this.elements.getButton())).click();
+            this.wait.until(ExpectedConditions.textToBePresentInElementValue
+                    (By.id(this.elements.getSide1Input()), ""));
+
+            String actualMessage = this.driver.findElement
+                    (By.id(this.elements.getClassificationMessage())).getText();
+            assertEquals(type, actualMessage);
         }
         catch(TimeoutException e) {
             System.out.println("Element not found!");
@@ -130,25 +118,9 @@ public class stepsDefinitions {
         }
     }
 
-    @Then("fill all sides size message should be displayed")
-    public void fill_all_sides_size_message_should_be_displayed() {
-        try {
-            this.driver.findElement(By.id("calcular")).click();
-            this.wait.until(ExpectedConditions.textToBePresentInElementValue
-                    (By.id("lado1"), ""));
-
-            String actualMessage = this.driver.findElement(By.id("message")).getText();
-            assertEquals("Preencha todos os lados", actualMessage);
-        }
-        catch(TimeoutException e) {
-            System.out.println("Element not found!");
-        }
-        catch(NoSuchElementException e) {
-            System.out.println("Element not found!");
-        }
-        finally {
-            this.driver.close();
-        }
+    @After
+    public void tearDown() {
+        this.driver.quit();
     }
 
 }
